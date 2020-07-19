@@ -10,11 +10,11 @@
     "author": "YouTwitFace <contact@lungers.com>",
     "license": "MIT",
     "dependencies": {
-        "dotenv": "^8.0.0",
+        "dotenv": "^8.2.0",
         "nedb": "^1.8.0",
-        "telegraf": "^3.30.1"
+        "telegraf": "^3.38.0"
     },
     "devDependencies": {
-        "eslint": "^5.16.0"
+        "eslint": "^7.5.0"
     }
 }
