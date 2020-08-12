@@ -5,7 +5,7 @@ const NeDB = require(`nedb`);
 const Telegraf = require(`telegraf`);
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const db = new NeDB({
-    filename: path.join(__dirname, `chats.db`),
+    filename: path.join(__dirname, `db/chats.db`),
     autoload: true,
 });
 
