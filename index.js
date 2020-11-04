@@ -54,7 +54,7 @@ bot.on(`message`, async ctx => {
             if (err) return console.error(err);
 
             if (!chat || !chat.pinned_message) {
-                await ctx.unpinChatMessage();
+                await ctx.unpinallchatmessages();
             } else {
                 await ctx.pinChatMessage(chat.pinned_message, {
                     disable_notification: true,
