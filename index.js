@@ -12,7 +12,7 @@ bot.command([`start`, `help`], ctx => {
 });
 
 bot.on(`message`, async ctx => {
-    if (ctx.message.sender_chat?.type === 'channel') {
+    if (ctx.message.sender_chat?.type === `channel`) {
         try {
             await ctx.unpinChatMessage(ctx.message.message_id);
         } catch (error) {
