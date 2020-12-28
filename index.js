@@ -6,6 +6,10 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.catch(console.log);
 
 bot.command([`start`, `help`], ctx => {
+    if (ctx.chat.type !== `private`) {
+        return;
+    }
+
     ctx.reply(
         `Hi, I'm a bot to unpin messages in your group when you post on the connected channel.`,
     );
