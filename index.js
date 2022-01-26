@@ -24,5 +24,21 @@ bot.on(`message`, async ctx => {
         }
     }
 });
+if (process.env.PORT && process.env.WEBHOOK_URL) {
+    bot.launch({
+        webhook: {
+            domain: process.env.WEBHOOK_URL,
+            port: process.env.PORT,
+        },
+    }).then(() =>
+        console.log(
+            `Bot is Online 🚀\nDOMAIN: ${process.env.WEBHOOK_URL}\nPORT: ${process.env.PORT}`,
+        ),
+    );
+} else {
+    bot.launch().then(() => console.log('Bot is Online  🚀'));
+}
 
-bot.launch();
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
