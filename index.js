@@ -2,7 +2,7 @@ require('dotenv').config({ quiet: true });
 
 const crypto = require('crypto');
 const http = require('http');
-const { Bot, webhookCallback } = require('grammy');
+const { Bot, GrammyError, webhookCallback } = require('grammy');
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
@@ -23,7 +23,20 @@ bot.on('message', async ctx => {
         try {
             await ctx.unpinChatMessage(ctx.message.message_id);
         } catch (error) {
-            console.error(error);
+            if (
+                error instanceof GrammyError &&
+                error.description.includes(
+                    'not enough rights to manage pinned messages',
+                )
+            ) {
+                try {
+                    await ctx.leaveChat();
+                } catch (leaveError) {
+                    console.error(leaveError);
+                }
+            } else {
+                console.error(error);
+            }
         }
     }
 });
