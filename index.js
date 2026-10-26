@@ -19,10 +19,20 @@ bot.command(['start', 'help'], ctx => {
 });
 
 bot.on('message', async ctx => {
-    if (ctx.message.sender_chat?.type === 'channel') {
+    if (
+        ctx.message.is_automatic_forward &&
+        ctx.message.sender_chat?.type === 'channel'
+    ) {
         try {
             await ctx.unpinChatMessage(ctx.message.message_id);
         } catch (error) {
+            if (
+                error instanceof GrammyError &&
+                error.description.includes('MESSAGE_ID_INVALID')
+            ) {
+                return;
+            }
+
             if (
                 error instanceof GrammyError &&
                 error.description.includes(
