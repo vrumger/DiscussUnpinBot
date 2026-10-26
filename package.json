@@ -10,10 +10,15 @@
     "author": "YouTwitFace <contact@lungers.com>",
     "license": "MIT",
     "dependencies": {
-        "dotenv": "^8.2.0",
-        "telegraf": "^4.0.0"
+        "dotenv": "^18.0.9",
+        "grammy": "^1.46.0"
     },
     "devDependencies": {
-        "eslint": "^7.17.0"
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.13.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.7",
+        "globals": "^17.13.0",
+        "prettier": "^3.9.10"
     }
 }

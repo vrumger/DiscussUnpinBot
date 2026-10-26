@@ -1,22 +1,25 @@
-require(`dotenv`).config();
+require('dotenv').config({ quiet: true });
 
-const { Telegraf } = require(`telegraf`);
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const crypto = require('crypto');
+const http = require('http');
+const { Bot, webhookCallback } = require('grammy');
+
+const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.catch(console.log);
 
-bot.command([`start`, `help`], ctx => {
-    if (ctx.chat.type !== `private`) {
+bot.command(['start', 'help'], ctx => {
+    if (ctx.chat.type !== 'private') {
         return;
     }
 
-    ctx.reply(
-        `Hi, I'm a bot to unpin messages in your group when you post on the connected channel.`,
+    return ctx.reply(
+        "Hi, I'm a bot to unpin messages in your group when you post on the connected channel.",
     );
 });
 
-bot.on(`message`, async ctx => {
-    if (ctx.message.sender_chat?.type === `channel`) {
+bot.on('message', async ctx => {
+    if (ctx.message.sender_chat?.type === 'channel') {
         try {
             await ctx.unpinChatMessage(ctx.message.message_id);
         } catch (error) {
@@ -24,21 +27,31 @@ bot.on(`message`, async ctx => {
         }
     }
 });
-if (process.env.PORT && process.env.WEBHOOK_URL) {
-    bot.launch({
-        webhook: {
-            domain: process.env.WEBHOOK_URL,
-            port: process.env.PORT,
-        },
-    }).then(() =>
-        console.log(
-            `Bot is Online 🚀\nDOMAIN: ${process.env.WEBHOOK_URL}\nPORT: ${process.env.PORT}`,
-        ),
-    );
-} else {
-    bot.launch().then(() => console.log('Bot is Online  🚀'));
-}
 
-// Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+if (process.env.PORT && process.env.WEBHOOK_URL) {
+    const url = /^https?:\/\//.test(process.env.WEBHOOK_URL)
+        ? process.env.WEBHOOK_URL
+        : `https://${process.env.WEBHOOK_URL}`;
+    const secretToken = crypto.randomBytes(32).toString('hex');
+    const server = http.createServer(
+        webhookCallback(bot, 'http', { secretToken }),
+    );
+
+    server.listen(process.env.PORT, async () => {
+        await bot.api.setWebhook(url, { secret_token: secretToken });
+
+        console.log(`Bot is online 🚀`);
+        console.log(`URL: ${process.env.WEBHOOK_URL}`);
+        console.log(`Port: ${process.env.PORT}`);
+    });
+
+    // Enable graceful stop
+    process.once('SIGINT', () => server.close());
+    process.once('SIGTERM', () => server.close());
+} else {
+    bot.start({ onStart: () => console.log('Bot is online 🚀') });
+
+    // Enable graceful stop
+    process.once('SIGINT', () => bot.stop());
+    process.once('SIGTERM', () => bot.stop());
+}
